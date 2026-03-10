@@ -20,7 +20,8 @@ jobs:
       security-events: write
     with:
       auroraboot_version: "v0.19.1"
-      kairos_version: "${{ github.ref_name }}"
+      # Ref in kairos-io/kairos to fetch the fallback Dockerfile (must be an existing tag/branch)
+      kairos_version: "v4.0.0"
       base_image: "ubuntu:24.04"
       arch: "amd64"
       model: "generic"

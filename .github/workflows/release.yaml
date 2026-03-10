@@ -21,7 +21,7 @@ jobs:
       auroraboot_version: "v0.19.1"
       # Use Kairos default Dockerfile (from kairos_version) with ubuntu:24.04 base
       dockerfile_path: ""
-      kairos_version: "v4.0.0
+      kairos_version: ${{ github.ref_name }}
       base_image: "ubuntu:24.04"
       arch: "amd64"
       model: "generic"

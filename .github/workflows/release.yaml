@@ -17,6 +17,7 @@ jobs:
       id-token: write
       contents: write
       actions: read
+      security-events: write
     with:
       auroraboot_version: "v0.19.1"
       kairos_version: "${{ github.ref_name }}"

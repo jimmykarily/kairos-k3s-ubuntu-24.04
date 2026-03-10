@@ -19,9 +19,7 @@ jobs:
       actions: read
     with:
       auroraboot_version: "v0.19.1"
-      # Use Kairos default Dockerfile (from kairos_version) with ubuntu:24.04 base
-      dockerfile_path: ""
-      kairos_version: ${{ github.ref_name }}
+      kairos_version: "${{ github.ref_name }}"
       base_image: "ubuntu:24.04"
       arch: "amd64"
       model: "generic"
@@ -32,10 +30,6 @@ jobs:
       kubernetes_distro: "k3s"
       list_release_artifacts: true
       release: true
-      # No registry: only upload ISO to GitHub Release (omit registry_domain so image is not pushed)
-      registry_domain: ""
-      registry_namespace: ""
-      # Optional: disable security scans for a minimal workflow
       grype: false
       trivy: false
       cosign: false

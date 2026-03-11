@@ -35,3 +35,10 @@ jobs:
       grype: false
       trivy: false
       cosign: false
+      # Push OCI image to Quay.io (requires REGISTRY_USERNAME and REGISTRY_PASSWORD GitHub secrets)
+      registry_domain: "quay.io"
+      registry_namespace: "jimmykarily"
+      registry_repository: "kairos-ubuntu-24.04-k3s"
+    secrets:
+      registry_username: ${{ secrets.REGISTRY_USERNAME }}
+      registry_password: ${{ secrets.REGISTRY_PASSWORD }}

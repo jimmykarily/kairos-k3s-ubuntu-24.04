@@ -11,6 +11,20 @@ ARG KUBERNETES_VERSION
 ARG VERSION
 ARG FIPS=no-fips
 
+# Install Intel TDX/SGX attestation packages (QGS + DCAP libraries)
+RUN apt-get update && apt-get install -y --no-install-recommends wget ca-certificates && \
+    wget -qO /tmp/intel-sgx-deb.key https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key && \
+    mkdir -p /etc/apt/keyrings && \
+    cat /tmp/intel-sgx-deb.key | tee /etc/apt/keyrings/intel-sgx-keyring.asc > /dev/null && \
+    echo 'deb [signed-by=/etc/apt/keyrings/intel-sgx-keyring.asc arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu noble main' | tee /etc/apt/sources.list.d/intel-sgx.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        tdx-qgs \
+        libsgx-dcap-default-qpl \
+        libsgx-dcap-ql && \
+    rm -f /tmp/intel-sgx-deb.key && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 RUN --mount=type=bind,from=kairos-init,src=/kairos-init,dst=/kairos-init \
     if [ -n "${KUBERNETES_DISTRO}" ]; then \
         K8S_FLAG="-p ${KUBERNETES_DISTRO}"; \

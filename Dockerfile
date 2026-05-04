@@ -20,6 +20,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget ca-certifi
     apt-get update && \
     apt-get install -y --no-install-recommends \
         tdx-qgs \
+        sgx-dcap-pccs \
+        sgx-pck-id-retrieval-tool \
+        sgx-ra-service \
+        libtdx-attest \
+        libtdx-attest-dev \
         libsgx-dcap-default-qpl \
         libsgx-dcap-ql && \
     rm -f /tmp/intel-sgx-deb.key && \

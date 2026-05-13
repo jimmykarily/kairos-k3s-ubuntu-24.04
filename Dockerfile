@@ -11,9 +11,11 @@ ARG KUBERNETES_VERSION
 ARG VERSION
 ARG FIPS=no-fips
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git make ca-certificates golang-go wget\
+    && rm -rf /var/lib/apt/lists/*
 # Install Intel TDX/SGX attestation packages (QGS + DCAP libraries)
-RUN apt-get update && apt-get install -y --no-install-recommends wget ca-certificates && \
-    wget -qO /tmp/intel-sgx-deb.key https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key && \
+RUN wget -qO /tmp/intel-sgx-deb.key https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key && \
     mkdir -p /etc/apt/keyrings && \
     cat /tmp/intel-sgx-deb.key | tee /etc/apt/keyrings/intel-sgx-keyring.asc > /dev/null && \
     echo 'deb [signed-by=/etc/apt/keyrings/intel-sgx-keyring.asc arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu noble main' | tee /etc/apt/sources.list.d/intel-sgx.list && \
@@ -30,6 +32,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget ca-certifi
     rm -f /tmp/intel-sgx-deb.key && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN git clone --depth 1 --branch v2.0.2 https://github.com/containerd/imgcrypt.git /tmp/imgcrypt \
+    && make -C /tmp/imgcrypt \
+    && make -C /tmp/imgcrypt install \
+    && rm -rf /tmp/imgcrypt
+
 RUN --mount=type=bind,from=kairos-init,src=/kairos-init,dst=/kairos-init \
     if [ -n "${KUBERNETES_DISTRO}" ]; then \
         K8S_FLAG="-p ${KUBERNETES_DISTRO}"; \
@@ -44,6 +51,6 @@ RUN --mount=type=bind,from=kairos-init,src=/kairos-init,dst=/kairos-init \
         K8S_FLAG=""; \
         K8S_VERSION_FLAG=""; \
     fi; \
-    if [ "$FIPS" == "fips" ]; then FIPS_FLAG="--fips"; else FIPS_FLAG=""; fi; \
+    if [ "$FIPS" = "fips" ]; then FIPS_FLAG="--fips"; else FIPS_FLAG=""; fi; \
     eval /kairos-init -l debug -s install -m \"${MODEL}\" -t \"${TRUSTED_BOOT}\" ${K8S_FLAG} ${K8S_VERSION_FLAG} --version \"${VERSION}\" \"${FIPS_FLAG}\" && \
     eval /kairos-init -l debug -s init -m \"${MODEL}\" -t \"${TRUSTED_BOOT}\" ${K8S_FLAG} ${K8S_VERSION_FLAG} --version \"${VERSION}\" \"${FIPS_FLAG}\"

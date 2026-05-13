@@ -12,10 +12,17 @@ ARG VERSION
 ARG FIPS=no-fips
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates curl gnupg git \
+        build-essential python3 cracklib-runtime \
+    && ln -sf /usr/bin/python3 /usr/bin/python \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
         git make ca-certificates golang-go wget\
     && rm -rf /var/lib/apt/lists/*
 # Install Intel TDX/SGX attestation packages (QGS + DCAP libraries)
-RUN wget -qO /tmp/intel-sgx-deb.key https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key && \
+RUN apt-get update && apt-get install -y --no-install-recommends wget ca-certificates && \
+    wget -qO /tmp/intel-sgx-deb.key https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key && \
     mkdir -p /etc/apt/keyrings && \
     cat /tmp/intel-sgx-deb.key | tee /etc/apt/keyrings/intel-sgx-keyring.asc > /dev/null && \
     echo 'deb [signed-by=/etc/apt/keyrings/intel-sgx-keyring.asc arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu noble main' | tee /etc/apt/sources.list.d/intel-sgx.list && \

@@ -29,7 +29,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget ca-certifi
     apt-get update && \
     apt-get install -y --no-install-recommends \
         tdx-qgs \
-        sgx-dcap-pccs \
+# TODO: PCCS fails install inside docker 
+# containers due to missing systemd/initd
+#        sgx-dcap-pccs \
         sgx-pck-id-retrieval-tool \
         sgx-ra-service \
         libtdx-attest \

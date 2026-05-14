@@ -43,7 +43,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget ca-certifi
 
 RUN git clone --depth 1 --branch v2.0.2 https://github.com/containerd/imgcrypt.git /tmp/imgcrypt \
     && make -C /tmp/imgcrypt \
-    && make -C /tmp/imgcrypt install \
+    && DESTDIR=/usr make -C /tmp/imgcrypt install \
     && rm -rf /tmp/imgcrypt
 
 RUN --mount=type=bind,from=kairos-init,src=/kairos-init,dst=/kairos-init \
